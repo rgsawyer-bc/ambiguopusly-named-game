@@ -1,4 +1,4 @@
-from random import random
+import random
 
 class Tile:
     def __init__(self, puzzle):
@@ -19,6 +19,10 @@ class Tile:
     
 
     def activate(self, fart):
+        pass
+
+
+    def earlyactivate(self, fart):
         pass
 
 
@@ -238,7 +242,7 @@ class Hole(Tile):
 
 
 class Grandma(Tile):
-    shorthand = "hole"
+    shorthand = "grandma"
     emojiname = ":older_woman:"
     emoji = "👵"
     description = "win"
@@ -253,10 +257,10 @@ class Grandma(Tile):
 
 
 class Dice(Tile):
-    shorthand = "hole"
-    emojiname = ":older_woman:"
+    shorthand = "dice"
+    emojiname = ":game_die:"
     emoji = "🎲"
-    description = "win"
+    description = "randomly go left or right"
 
 
     def next(self, fart):
@@ -264,13 +268,103 @@ class Dice(Tile):
         return random.choice(choices)
 
 
+class Balloon(Tile):
+    shorthand = "balloon"
+    emojiname = ":balloon:"
+    emoji = "🎈"
+    description = "up"
 
 
+    def earlyactivate(self, fart):
+        fart.emoji = "🎈"
 
 
-# right ✒️ 💨 left🖋️
+    def activate(self, fart):
+        fart.direction = -1
+        fart.puzzle[fart] = Air(fart.puzzle)
+
+
+class Cactus(Tile):
+    shorthand = "cactus"
+    emojiname = ":cactus:"
+    emoji = "🌵"
+    description = "cactus"
+
+    
+    def earlyactivate(self, fart):
+        fart.emoji = "💨"
+
+
+    def activate(self, fart):
+        fart.direction = 1
+        
+
+class Sparkle(Tile):
+    shorthand = "sparkle"
+    emojiname = ":sparkles:"
+    emoji = "✨"
+    description = "sparkle"
+
+
+class Wizard(Tile):
+    shorthand = "wizard"
+    emojiname = ":man_mage:"
+    emoji = "🧙"
+    description = "wizard"
+
+
+    def earlyactivate(self, fart):
+        sparkleIndex1, sparkleIndex2 = fart.puzzle.findTileIndeces(Sparkle)
+        x1, y1, z1 = sparkleIndex1
+        tile1Index = (x1, y1 + 1, z1)
+        x2, y2, z2 = sparkleIndex2
+        tile2Index = (x2, y2 + 1, z2)
+        
+        tile1 = fart.puzzle[tile1Index]
+        tile2 = fart.puzzle[tile2Index]
+
+        fart.puzzle[tile1Index] = tile2
+        fart.puzzle[tile2Index] = tile1
+
+
+class Scale(Tile):
+    shorthand = "scale"
+    emojiname = ":scales:"
+    emoji = "⚖️ "
+    description = "scale"
+
+
+    def next(self, fart):
+        if fart.startloc % 2 == 0:
+            return RightRamp(fart.puzzle).next(fart)
+        else:
+            return LeftRamp(fart.puzzle).next(fart)
+
+
+class Lightning(Tile):
+    shorthand = "scale"
+    emojiname = ":scales:"
+    emoji = "⚖️ "
+    description = "scale"
+
+
+    def aoe(self, fart):
+        if fart.gravity[0] == 0:
+            return []
+    
+
 
 
 # tile which you choose what direction ramp it is in the beginning
-# multiple boards, multiple fart starting locations
-# local gravity switch, global gravity switch
+# tile that lets you put thing at top again
+# tile that shifts row to left/right/lets you choose
+# tile where you choose what direction ramp it is when you land on it
+# tiles that when you land on them, you get the ability to do something later on
+# tiles where you choose the direction of gravity
+# tile that pulls farts towards it (?)
+
+# this code is designed to handle multiple farts on multiple boards at the same time:
+    # tile that splits a fart into two farts
+    # tile that lets you place a new fart
+    # local gravity switch, global gravity switch (gravity switches only change the gravity for the current board, another tile could change gravity for every board)
+    # perhaps require that each fart land on a grandma
