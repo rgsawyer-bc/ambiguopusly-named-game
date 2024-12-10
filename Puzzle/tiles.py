@@ -1,9 +1,9 @@
 import random
 
 class Tile:
-    def __init__(self, puzzle):
+    def __init__(self, puzzle = None):
         self.puzzle = puzzle
-        self.disableAOE = False
+        self.disableaoe = False
 
 
     def __eq__(self, other):
@@ -342,15 +342,72 @@ class Scale(Tile):
 
 
 class Lightning(Tile):
-    shorthand = "scale"
-    emojiname = ":scales:"
-    emoji = "⚖️ "
-    description = "scale"
+    shorthand = "lightning"
+    emojiname = ":zap:"
+    emoji = "⚡"
+    description = "lightning"
 
 
     def aoe(self, fart):
-        if fart.gravity[0] == 0:
-            return []
+        return [fart.left(), fart.right()]
+    
+
+    def trigger(self, fart):
+        puzzle = fart.puzzle
+        if fart.direction == -1:
+            fart.aoemovement = True
+            if isinstance(puzzle[fart.left()], Lightning) and puzzle.isoob(fart.left()) is False:
+                fart.moveto(fart.left())
+            else:
+                fart.moveto(fart.right())
+
+
+class Door(Tile):
+    shorthand = "door"
+    emojiname = ":door:"
+    emoji = "🚪"
+    description = "door"
+
+    def activate(self, fart):
+        fart.puzzle.state = "lose"
+
+
+class Key(Tile):
+    shorthand = "key"
+    emojiname = ":key:"
+    emoji = "🔑"
+    description = "key"
+
+    def earlyactivate(self, fart):
+        puzzle = fart.puzzle
+        puzzle[puzzle.findTileIndeces(Door)[0]] = Air(fart.puzzle)
+        puzzle[fart] = Air()
+
+
+class Basket(Tile):
+    shorthand = "basket"
+    emojiname = ":wastebasket:"
+    emoji = "🗑️ "
+    description = "basket"
+
+
+class Basketball(Tile):
+    shorthand = "basketball"
+    emojiname = ":basketball:"
+    emoji = "🏀"
+    description = "basketball"
+
+
+    def activate(self, fart):
+        self.disableaoe = True
+        basketIndeces = self.puzzle.findTileIndeces(Basket)
+        which = int(input("Choose basket: ")) - 1
+        fart.moveto(basketIndeces[which])
+
+
+    def next(self, fart):
+        return fart.coords()
+
     
 
 
@@ -360,7 +417,6 @@ class Lightning(Tile):
 # tile that shifts row to left/right/lets you choose
 # tile where you choose what direction ramp it is when you land on it
 # tiles that when you land on them, you get the ability to do something later on
-# tiles where you choose the direction of gravity
 # tile that pulls farts towards it (?)
 
 # this code is designed to handle multiple farts on multiple boards at the same time:

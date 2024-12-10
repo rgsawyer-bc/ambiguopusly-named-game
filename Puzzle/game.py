@@ -1,5 +1,16 @@
-from tiles import *
+if __name__ == "__main__":
+    from tiles import *
+else:
+    from Puzzle.tiles import *
 import time
+
+def unique(lst: list):
+    output = []
+    for i in lst:
+        if i not in output:
+            output.append(i)
+
+    return output
 
 class Fart:
     def __init__(self, coords, puzzle, startloc, direction = 1, start = 1):
@@ -133,13 +144,10 @@ class Board:
     
 
     def __getitem__(self, index):
-        if isinstance(index, Fart) or isinstance(index, tuple):
+        if isinstance(index, Fart) or isinstance(index, tuple) or isinstance(index, list):
             return self.tiles[index[1]][index[0]]
         else:
             return self.tiles[index]
-        
-
-    # define in boolean to check if fart in board
     
 
 class Puzzle:
@@ -153,7 +161,7 @@ class Puzzle:
 
 
     def __getitem__(self, index):
-        if isinstance(index, Fart) or isinstance(index, tuple):
+        if isinstance(index, Fart) or isinstance(index, tuple) or isinstance(index, list):
             return self.boards[index[2]][index]
         else:
             return self.boards[index]
@@ -163,12 +171,37 @@ class Puzzle:
         if isinstance(index, Fart):
             fart = index
             self[fart.z][fart.y][fart.x] = tile
-        elif isinstance(index, tuple):
+        else:
             self[index[2]][index[1]][index[0]] = tile
 
 
     def __str__(self):
         return "\n\n\n".join([str(board) for board in self.boards])
+    
+
+    def isoob(self, fart):
+        x, y, z = fart.coords() if isinstance(fart, Fart) else fart
+        if z >= 0 and z < len(self.boards):
+            board = self[z]
+            if (x >= 0 and x < board.width and
+                y >= 0 and y < board.height):
+                    return False
+
+        return True
+    
+
+    def filter(self, indeces):
+        """returns a list of indeces that arent out of bounds"""
+        filteredIndeces = []
+        for index in indeces:
+            x, y, z = index
+            if z >= 0 and z < len(self.boards):
+                board = self[z]
+                if (x >= 0 and x < board.width and
+                    y >= 0 and y < board.height):
+                    filteredIndeces.append(index)
+
+        return filteredIndeces
 
 
     def createFart(self, coords, startloc):
@@ -188,6 +221,7 @@ class Puzzle:
 
     
     def update(self):
+        # early activates
         for fart in self.farts:
             tile = fart.tile()
             tile.earlyactivate(fart)
@@ -196,8 +230,21 @@ class Puzzle:
 
         for fart in self.farts:
             tile = fart.tile()
+
+            # normal activate
             tile.activate(fart)
-            fart.moveto(tile.next(fart))
+            disableaoe = tile.disableaoe
+
+            # aoe effects
+            fart.aoemovement = False
+            if disableaoe is False:
+                for aoetile in self.aoeTiles:
+                    if aoetile in [self[index] for index in self.filter(aoetile.aoe(fart))]:
+                        aoetile.trigger(fart)
+
+            # next movement
+            if fart.aoemovement is False:
+                fart.moveto(tile.next(fart))
 
 
     def start(self):
@@ -205,6 +252,8 @@ class Puzzle:
             startIndeces = self.findTileIndeces(startTile)
             startIndex = int(input("Start at ")) - 1
             self.createFart(startIndeces[startIndex], startloc = startIndex + 1)
+
+            self.aoeTiles = unique([tile for board in self.boards for y in board for tile in y if tile.aoe(self.farts[0]) is not None])
 
 
     def play(self):
@@ -218,37 +267,11 @@ class Puzzle:
 
         if self.state == "win":
             print("win :D")
-        else:
+            return None
+        elif self.state == "lose":
             print("lose :(")
-                    
+            return None
 
-mainBoard = [
-    Start1, Start1, Start1, Start1, Start1, Start1, Start1, 
-    Air, Air, Cactus, Air, Cactus, Air, LeftRamp,
-    Air, Air, Air, Air, Air, Air, Air, 
-    Air, Air, Bomb, Air, Air, Scale, Air, 
-    RightRamp, Air, Air, Air, Air, RightRamp, Air, 
-    Air, Wizard, Air, RightRamp, Air, Air, Air, 
-    Sparkle, Air, Air, Air, Air, Air, Sparkle,
-    Helicopter, Air, LeftRamp, Air, Scale, Air, CircusExit,
-    Air, RightRamp, Air, Air, LeftRamp, Air, Air, 
-    Air, Air, Air, Air, Explosion, Air, Air, 
-    Air, Air, Air, Air, Air, LeftRamp, Air, 
-    RightRamp, Air, Balloon, FigglesEntrance, Air, Air, Air, 
-    Hole, Grandma, Hole, Hole, Hole, Hole, Hole
-]
-
-figglesBoard = [
-    Air, FigglesExit, Air, 
-    Air, Air, Air, 
-    Air, Scale, Air, 
-    Air, Air, Air, 
-    Air, Air, Air, 
-    Air, Air, Air, 
-    CircusEntrance, Hole, Hole
-]
-mainBoard = Board(7, 13, mainBoard)
-figglesBoard = Board(3, 7, figglesBoard)
-Puzzle2 = Puzzle([mainBoard, figglesBoard], startTiles = [Start1])
-
-Puzzle2.play()
+        for fart in self.farts:
+            if self.isoob(fart):
+                raise IndexError('the fart has fallen out of the board i fear')
