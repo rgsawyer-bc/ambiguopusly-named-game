@@ -4,6 +4,7 @@ class Tile:
     def __init__(self, puzzle = None):
         self.puzzle = puzzle
         self.disableaoe = False
+        self.active = False
 
 
     def __eq__(self, other):
@@ -35,6 +36,7 @@ class Start1(Tile):
     emojiname = ":one:"
     emoji = "1️⃣ "
     description = "start here"
+    location = (1, 0)
 
 
 class Start2(Tile):
@@ -42,6 +44,15 @@ class Start2(Tile):
     emojiname = ":two:"
     emoji = "2️⃣ "
     description = "start here"
+    location = (2, 0)
+
+
+class Start3(Tile):
+    shorthand = "start3"
+    emojiname = ":three:"
+    emoji = "3️⃣ "
+    description = "start here"
+    location = (3, 0)
 
 
 class Air(Tile):
@@ -49,6 +60,7 @@ class Air(Tile):
     emojiname = ":black_large_square:"
     emoji = "⬛"
     description = "A blank tile. Fart passes through normally with no strings attached."
+    location = (0, 0)
 
 
 class RightRamp(Tile):
@@ -56,6 +68,7 @@ class RightRamp(Tile):
     emojiname = ":black_large_square:"
     emoji = "↘️ "
     description = "push the the right lol"
+    location = (10, 0)
 
 
     def next(self, fart):
@@ -76,6 +89,7 @@ class LeftRamp(Tile):
     emojiname = ":black_large_square:"
     emoji = "🖋️ "
     description = "push the the left lol"
+    location = (11, 0)
 
 
     def next(self, fart):
@@ -96,6 +110,7 @@ class GravityDown(Tile):
     emojiname = ":black_large_square:"
     emoji = "⬇️ "
     description = "switches board gravity to down"
+    location = (12, 0)
 
 
     def activate(self, fart):
@@ -108,6 +123,7 @@ class GravityLeft(Tile):
     emojiname = ":black_large_square:"
     emoji = "⬅️ "
     description = "switches board gravity to left"
+    location = (13, 0)
 
 
     def activate(self, fart):
@@ -120,6 +136,7 @@ class GravityRight(Tile):
     emojiname = ":black_large_square:"
     emoji = "➡️ "
     description = "switches board gravity to right"
+    location = (14, 0)
 
 
     def activate(self, fart):
@@ -132,6 +149,7 @@ class GravityUp(Tile):
     emojiname = ":black_large_square:"
     emoji = "⬆️ "
     description = "switches board gravity to up"
+    location = (15, 0)
 
 
     def activate(self, fart):
@@ -144,6 +162,7 @@ class Bomb(Tile):
     emojiname = ":bomb:"
     emoji = "💣"
     description = "teleport to explosion"
+    location = (0, 1)
 
 
     def next(self, fart):
@@ -161,6 +180,7 @@ class Explosion(Tile):
     emojiname = ":boom:"
     emoji = "💥"
     description = "bomb explodes here"
+    location = (1, 1)
 
 
 class Helicopter(Tile):
@@ -168,6 +188,7 @@ class Helicopter(Tile):
     emojiname = ":helicopter:"
     emoji = "🚁"
     description = "go back up"
+    location = (2, 1)
 
 
     def next(self, fart):
@@ -183,6 +204,7 @@ class FigglesEntrance(Tile):
     emojiname = ":clown:"
     emoji = "🤡"
     description = "go to figgles land"
+    location = (3, 1)
 
 
     def next(self, fart):
@@ -200,6 +222,7 @@ class FigglesExit(Tile):
     emojiname = ":clown:"
     emoji = "🤡"
     description = "you are now in figgles land"
+    location = (3, 1)
 
 
 class CircusEntrance(Tile):
@@ -207,6 +230,7 @@ class CircusEntrance(Tile):
     emojiname = ":circus_tent:"
     emoji = "🎪"
     description = "leave figgles land"
+    location = (4, 1)
 
 
     def next(self, fart):
@@ -224,6 +248,7 @@ class CircusExit(Tile):
     emojiname = ":circus_tent:"
     emoji = "🎪"
     description = "you have left figgles land"
+    location = (4, 1)
 
 
 class Hole(Tile):
@@ -231,6 +256,7 @@ class Hole(Tile):
     emojiname = ":hole:"
     emoji = "🕳️ "
     description = "die"
+    location = (5, 1)
 
 
     def next(self, fart):
@@ -246,6 +272,7 @@ class Grandma(Tile):
     emojiname = ":older_woman:"
     emoji = "👵"
     description = "win"
+    location = (6, 1)
 
 
     def next(self, fart):
@@ -261,6 +288,7 @@ class Dice(Tile):
     emojiname = ":game_die:"
     emoji = "🎲"
     description = "randomly go left or right"
+    location = (7, 1)
 
 
     def next(self, fart):
@@ -273,10 +301,12 @@ class Balloon(Tile):
     emojiname = ":balloon:"
     emoji = "🎈"
     description = "up"
+    location = (8, 1)
 
 
     def earlyactivate(self, fart):
         fart.emoji = "🎈"
+        fart.location = (8, 1)
 
 
     def activate(self, fart):
@@ -289,10 +319,12 @@ class Cactus(Tile):
     emojiname = ":cactus:"
     emoji = "🌵"
     description = "cactus"
+    location = (9, 1)
 
     
     def earlyactivate(self, fart):
         fart.emoji = "💨"
+        fart.location = (2, 2)
 
 
     def activate(self, fart):
@@ -304,6 +336,7 @@ class Sparkle(Tile):
     emojiname = ":sparkles:"
     emoji = "✨"
     description = "sparkle"
+    location = (10, 1)
 
 
 class Wizard(Tile):
@@ -311,6 +344,7 @@ class Wizard(Tile):
     emojiname = ":man_mage:"
     emoji = "🧙"
     description = "wizard"
+    location = (11, 1)
 
 
     def earlyactivate(self, fart):
@@ -332,6 +366,7 @@ class Scale(Tile):
     emojiname = ":scales:"
     emoji = "⚖️ "
     description = "scale"
+    location = (12, 1)
 
 
     def next(self, fart):
@@ -346,6 +381,7 @@ class Lightning(Tile):
     emojiname = ":zap:"
     emoji = "⚡"
     description = "lightning"
+    location = (13, 1)
 
 
     def aoe(self, fart):
@@ -367,6 +403,8 @@ class Door(Tile):
     emojiname = ":door:"
     emoji = "🚪"
     description = "door"
+    location = (14, 1)
+
 
     def activate(self, fart):
         fart.puzzle.state = "lose"
@@ -377,6 +415,8 @@ class Key(Tile):
     emojiname = ":key:"
     emoji = "🔑"
     description = "key"
+    location = (15, 1)
+
 
     def earlyactivate(self, fart):
         puzzle = fart.puzzle
@@ -389,6 +429,7 @@ class Basket(Tile):
     emojiname = ":wastebasket:"
     emoji = "🗑️ "
     description = "basket"
+    location = (1, 2)
 
 
 class Basketball(Tile):
@@ -396,13 +437,18 @@ class Basketball(Tile):
     emojiname = ":basketball:"
     emoji = "🏀"
     description = "basketball"
+    location = (0, 2)
 
 
     def activate(self, fart):
         self.disableaoe = True
         basketIndeces = self.puzzle.findTileIndeces(Basket)
-        which = int(input("Choose basket: ")) - 1
-        fart.moveto(basketIndeces[which])
+
+        chosenBasket = None
+        while chosenBasket not in basketIndeces:
+            chosenBasket = fart.puzzle.pygame.input()
+
+        fart.moveto(chosenBasket)
 
 
     def next(self, fart):

@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     from tiles import *
 else:
-    from Puzzle.tiles import *
+    from puzzles.Puzzle.tiles import *
 import time
 
 def unique(lst: list):
@@ -24,6 +24,8 @@ class Fart:
         self.x, self.y, self.z = coords
 
         self.board = puzzle.boards[self.z]
+
+        self.location = (2, 2)
 
 
     def getGravity(self):
@@ -157,6 +159,7 @@ class Puzzle:
         self.farts = []
         self.startTiles = startTiles
         self.state = "initializing"
+        self.waiting = False
 
 
     def __getitem__(self, index):
@@ -176,6 +179,15 @@ class Puzzle:
 
     def __str__(self):
         return "\n\n\n".join([str(board) for board in self.boards])
+    
+
+    def unique(self, lst: list):
+        output = []
+        for i in lst:
+            if i not in output:
+                output.append(i)
+
+        return output
     
 
     def isoob(self, fart):
@@ -225,7 +237,7 @@ class Puzzle:
             tile = fart.tile()
             tile.earlyactivate(fart)
 
-        print(self)
+        # print(self)
 
         for fart in self.farts:
             tile = fart.tile()

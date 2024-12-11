@@ -1,4 +1,4 @@
-from Puzzle.game import *
+from puzzles.Puzzle.game import *
 
 mainBoard = [
     Start1, Start1, Start1, Start1, Start1, Start1, Start1, 
