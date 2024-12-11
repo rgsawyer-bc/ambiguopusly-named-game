@@ -101,8 +101,7 @@ class Board:
             raise ValueError("dumbass")
 
         self.tiles = tiles
-        self.setGravity(gravity) # oh boy this shits gonna get weird
-            # instead of making each thing refer explicitly to a relative index, make a function that returns the "left direction" (or other directions) given a gravity
+        self.setGravity(gravity)
 
 
     def setPuzzle(self, puzzle):

@@ -1,6 +1,4 @@
-import sys
-sys.path.insert(1, r"C:\Users\Graham\Documents\ambiguopusly-named-game\Puzzle")
-from game import *
+from Puzzle.game import *
 
 mainBoard = [
     Start1, Start1, Start1, Start1, Start1, Start1, Start1, 
